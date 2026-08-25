@@ -38,7 +38,7 @@
 - [x] Exercise mobile and tablet sidebar navigation with the menu control.
 - [x] Exercise the programme editor sheet at a mobile breakpoint, including cancel and save controls.
 
-## Google Drive Image Workflow
+## Google Drive Image Workflows
 
 - [x] Accept administrator-entered Google Drive sharing links for every public image field.
 - [x] Normalize supported Drive URLs into display-ready image URLs without exposing credentials.
