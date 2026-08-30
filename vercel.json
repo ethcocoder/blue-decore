@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "buildCommand": "pnpm build",
+  "outputDirectory": "dist/public",
+  "framework": "vite",
+  "functions": {
+    "api/trpc/[...path].js": {
+      "maxDuration": 30
+    }
+  },
+  "rewrites": [
+    { "source": "/api/trpc/:path*", "destination": "/api/trpc/:path*" },
+    { "source": "/((?!api/trpc(?:/|$)).*)", "destination": "/index.html" }
+  ]
+}
