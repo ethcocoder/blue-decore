@@ -211,15 +211,21 @@ figcaption { color: var(--ink-soft); display: flex; font-size: 9px; font-weight:
 
 .services-heading { margin-bottom: 66px; }
 .services-grid { border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(4, 1fr); }
-.service-card { background: transparent; border: 0; border-right: 1px solid var(--line); min-height: 275px; padding: 24px 25px 22px 0; text-align: left; transition: background-color .25s var(--ease-out), padding .25s var(--ease-out); }
-.service-card + .service-card { padding-left: 25px; }
-.service-card:last-child { border-right: 0; padding-right: 0; }
-.service-card:hover { background: rgba(255, 250, 244, .45); padding-top: 29px; }
+.service-card { background: var(--paper-light); border: 0; border-right: 1px solid var(--line); min-height: 440px; padding: 15px; text-align: left; transition: background-color .25s var(--ease-out), padding .25s var(--ease-out), transform .25s var(--ease-out); }
+.service-card + .service-card { padding-left: 15px; }
+.service-card:last-child { border-right: 0; }
+.service-card:hover { background: #f7fbff; padding-top: 11px; transform: translateY(-4px); }
+.dark .service-card:hover { background: #19466e; }
+.service-image { aspect-ratio: 4 / 3; background: #b8d5f2; margin-bottom: 17px; overflow: hidden; position: relative; }
+.service-image::after { background: linear-gradient(0deg, rgba(8, 28, 50, .68), transparent 58%); content: ""; inset: 0; pointer-events: none; position: absolute; }
+.service-image img { height: 100%; object-fit: cover; transition: transform .8s var(--ease-out); width: 100%; }
+.service-card:hover .service-image img { transform: scale(1.045); }
+.service-image span { bottom: 11px; color: #f7fbff; font-size: 9px; font-weight: 700; left: 12px; letter-spacing: .12em; position: absolute; text-transform: uppercase; z-index: 1; }
 .service-top { align-items: center; color: var(--signal); display: flex; justify-content: space-between; }
 .service-top span { font-family: "Bodoni Moda", Georgia, serif; font-size: 20px; }
-.service-card h3 { font-family: "Bodoni Moda", Georgia, serif; font-size: 25px; font-weight: 600; letter-spacing: -.04em; line-height: 1.08; margin: 61px 0 15px; max-width: 210px; }
+.service-card h3 { font-family: "Bodoni Moda", Georgia, serif; font-size: 25px; font-weight: 600; letter-spacing: -.04em; line-height: 1.08; margin: 22px 0 11px; max-width: 210px; }
 .service-card p { color: var(--ink-soft); font-size: 12px; line-height: 1.55; margin: 0; max-width: 215px; }
-.service-link { align-items: center; color: var(--signal); display: flex; font-size: 10px; font-weight: 700; gap: 8px; letter-spacing: .1em; margin-top: 22px; text-transform: uppercase; }
+.service-link { align-items: center; color: var(--signal); display: flex; font-size: 10px; font-weight: 700; gap: 8px; letter-spacing: .1em; margin-top: 17px; text-transform: uppercase; }
 
 .event-section { align-items: center; display: grid; gap: 10%; grid-template-columns: minmax(310px, 1fr) minmax(300px, .8fr); }
 .event-image { overflow: hidden; position: relative; }
@@ -445,11 +451,14 @@ figcaption { color: var(--ink-soft); display: flex; font-size: 9px; font-weight:
   .audio-feature { min-height: 385px; }
   .services-heading { margin-bottom: 46px; }
   .services-grid { grid-template-columns: 1fr 1fr; }
-  .service-card, .service-card + .service-card, .service-card:last-child { border-bottom: 1px solid var(--line); border-right: 1px solid var(--line); min-height: 245px; padding: 18px 15px 18px 0; }
-  .service-card:nth-child(2n) { border-right: 0; padding-left: 15px; padding-right: 0; }
+  .service-card, .service-card + .service-card, .service-card:last-child { border-bottom: 1px solid var(--line); border-right: 1px solid var(--line); min-height: 355px; padding: 11px 10px 16px; }
+  .service-card:nth-child(2n) { border-right: 0; }
   .service-card:nth-child(n+3) { border-bottom: 0; }
-  .service-card h3 { font-size: 22px; margin-top: 42px; }
+  .service-image { margin-bottom: 12px; }
+  .service-image span { font-size: 8px; left: 9px; }
+  .service-card h3 { font-size: 21px; margin-top: 15px; }
   .service-card p { font-size: 11px; }
+  .service-link { margin-top: 13px; }
   .event-section { gap: 39px; }
   .event-image { width: 92%; }
   .journal-list { margin-top: 46px; }

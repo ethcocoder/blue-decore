@@ -1,5 +1,5 @@
-// Broadcast Atelier direction: the public page remains a warm, asymmetric editorial broadcast while every story, image, and contact detail comes from the Kasha desk.
-import { FormEvent, useEffect, useMemo, useState } from "react";
+// Broadcast Atelier direction: the public page remains a warm, asymmetric editorial broadcast while every story, image, and contact detail comes from the Blue Decore studio.
+import { FormEvent, useEffect, useState } from "react";
 import {
   ArrowDownRight, ArrowRight, ArrowUpRight, CalendarDays, Camera, ChevronDown,
   Facebook, Globe2, Instagram, LogIn, Mail, MapPin, Menu, Mic2, Moon, Play,
@@ -11,20 +11,29 @@ import { trpc } from "@/lib/trpc";
 
 const asset = { mark: "/manus-storage/kasha-signal-mark_87b5eda2.png" };
 
+const celebrationPackages = [
+  { id: "weddings", title: "Wedding Moments", subtitle: "Ceremony + reception", tag: "Weddings", description: "Romantic blue-and-ivory styling, floral moments, and a beautiful setting for your yes.", imageUrl: "/images/blue-decore/weddings.jpg", featureTitle: "A day worth remembering", featureSubtitle: "Blue, soft, and entirely yours" },
+  { id: "birthdays", title: "Birthday Joy", subtitle: "Milestones + surprises", tag: "Birthdays", description: "Playful, polished décor that makes every age and every guest feel celebrated.", imageUrl: "/images/blue-decore/birthdays.jpg", featureTitle: "Make a little more magic", featureSubtitle: "Bright details for the big day" },
+  { id: "graduations", title: "Graduate Glow", subtitle: "Photo moments + parties", tag: "Graduations", description: "A proud, photo-ready celebration for the next chapter, styled in confident blue.", imageUrl: "/images/blue-decore/graduations.jpg", featureTitle: "Celebrate the next chapter", featureSubtitle: "A setting made for proud photos" },
+  { id: "baby-showers", title: "Baby Showers", subtitle: "Sweet beginnings", tag: "Baby showers", description: "Gentle, joyful styling for welcoming a new little love and gathering your people.", imageUrl: "/images/blue-decore/baby-showers.jpg", featureTitle: "The sweetest beginning", featureSubtitle: "Soft details, warm memories" },
+] as const;
+
+const decorServices = [
+  { title: "Wedding Décor", description: "From ceremony backdrops to reception tables, we style the whole love story.", image: "/images/blue-decore/weddings.jpg", label: "Wedding décor" },
+  { title: "Birthday Décor", description: "Beautiful balloons, cake tables, and cheerful details made for your moment.", image: "/images/blue-decore/birthdays.jpg", label: "Birthday décor" },
+  { title: "Graduation Décor", description: "Blue-forward photo corners and party styling for every proud achievement.", image: "/images/blue-decore/graduations.jpg", label: "Graduation décor" },
+  { title: "Baby Shower Décor", description: "Soft, joyful styling for a beautiful welcome and a room full of love.", image: "/images/blue-decore/baby-showers.jpg", label: "Baby shower décor" },
+] as const;
+
 const labels = {
-  en: { about: "About", programs: "Programs", services: "Services", journal: "Journal", talk: "Let's talk", admin: "Admin", why: "Why Kasha", weekly: "Weekly radio programme", readStory: "Read the full story", viewNotes: "View all notes", name: "Name", email: "Email", brief: "What are you making?", send: "Send the note", placeholderName: "Your name", placeholderEmail: "you@example.com", placeholderBrief: "A programme, an event, a field note..." },
-  am: { about: "ስለ እኛ", programs: "ፕሮግራሞች", services: "አገልግሎቶች", journal: "መዝገብ", talk: "እንነጋገር", admin: "አስተዳዳሪ", why: "ለምን ካሻ", weekly: "የሳምንታዊ ሬዲዮ ፕሮግራም", readStory: "ሙሉ ታሪኩን ያንብቡ", viewNotes: "ሁሉንም ማስታወሻዎች ይመልከቱ", name: "ስም", email: "ኢሜይል", brief: "ምን እያዘጋጁ ነው?", send: "መልዕክቱን ይላኩ", placeholderName: "ስምዎ", placeholderEmail: "you@example.com", placeholderBrief: "ፕሮግራም፣ ዝግጅት፣ የመስክ ማስታወሻ..." },
+  en: { about: "About", programs: "Collections", services: "Services", journal: "Ideas", talk: "Let's plan", admin: "Admin", why: "Why Blue Decore", weekly: "Weekly studio note", readStory: "Meet the studio", viewNotes: "View our ideas", name: "Name", email: "Email", brief: "What are you celebrating?", send: "Send the note", placeholderName: "Your name", placeholderEmail: "you@example.com", placeholderBrief: "A wedding, birthday, graduation..." },
+  am: { about: "ስለ እኛ", programs: "ስብስቦች", services: "አገልግሎቶች", journal: "ሀሳቦች", talk: "እንነጋገር", admin: "አስተዳዳሪ", why: "ለምን Blue Decore", weekly: "የስቱዲዮ ማስታወሻ", readStory: "ስቱዲዮውን ያግኙ", viewNotes: "ሀሳቦቻችንን ይመልከቱ", name: "ስም", email: "ኢሜይል", brief: "ምን እያከበሩ ነው?", send: "መልዕክቱን ይላኩ", placeholderName: "ስምዎ", placeholderEmail: "you@example.com", placeholderBrief: "ሰርግ፣ ልደት፣ ምርቃት..." },
 } as const;
 
 function scrollToId(id: string) { document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" }); }
 
-function serviceIcon(iconKey: string) {
-  const icons = { mic: Mic2, camera: Camera, calendar: CalendarDays, radio: Radio, film: Play, sparkles: Sparkles };
-  return icons[iconKey as keyof typeof icons] ?? Mic2;
-}
-
 function LoadingSignal() {
-  return <main className="kasha-page"><section className="hero"><div className="hero-scrim" /><div className="hero-content section-wrap"><div className="hero-copy"><p className="eyebrow eyebrow-light">Loading the signal</p><h1>Making room<br /><em>for the story.</em></h1><p className="hero-intro">The Kasha desk is bringing today&apos;s programme into focus.</p></div></div></section></main>;
+  return <main className="kasha-page"><section className="hero"><div className="hero-scrim" /><div className="hero-content section-wrap"><div className="hero-copy"><p className="eyebrow eyebrow-light">Loading the signal</p><h1>Making room<br /><em>for the story.</em></h1><p className="hero-intro">The Blue Decore studio is bringing today&apos;s programme into focus.</p></div></div></section></main>;
 }
 
 export default function Home() {
@@ -45,13 +54,66 @@ export default function Home() {
   useEffect(() => { localStorage.setItem("kasha-language", language); document.documentElement.lang = language === "am" ? "am" : "en"; }, [language]);
 
   const content = homepage.data;
-  const leadEvent = content?.events[0];
-  const featuredProgram = useMemo(() => content?.programs.find((item) => item.featureTitle) ?? content?.programs[0], [content?.programs]);
+  const featuredProgram = celebrationPackages[0];
 
   if (homepage.isLoading || !content?.settings) return <LoadingSignal />;
-  if (homepage.isError) return <main className="kasha-page"><section className="hero"><div className="hero-scrim" /><div className="hero-content section-wrap"><div className="hero-copy"><p className="eyebrow eyebrow-light">Signal interrupted</p><h1>We&apos;ll be back<br /><em>shortly.</em></h1><p className="hero-intro">The Kasha desk could not load the current broadcast. Please refresh this page.</p></div></div></section></main>;
+  if (homepage.isError) return <main className="kasha-page"><section className="hero"><div className="hero-scrim" /><div className="hero-content section-wrap"><div className="hero-copy"><p className="eyebrow eyebrow-light">Signal interrupted</p><h1>We&apos;ll be back<br /><em>shortly.</em></h1><p className="hero-intro">The Blue Decore studio could not load the current broadcast. Please refresh this page.</p></div></div></section></main>;
 
-  const { settings, programs, services, journalEntries } = content;
+  const { settings: contentSettings, journalEntries } = content;
+  const settings = {
+    ...contentSettings,
+    siteName: "Blue Decore",
+    brandLine: "Celebrations, styled beautifully",
+    heroEyebrow: "Events made memorable",
+    heroTitle: "Make the moment",
+    heroAccent: "feel unforgettable.",
+    heroIntro: "Friendly, thoughtful décor for weddings, birthdays, graduations, baby showers, and every beautiful reason to gather.",
+    heroCtaLabel: "Plan your celebration",
+    heroImageUrl: "/images/blue-decore/celebration-reference.jpg",
+    heroAsideTitle: "Weddings • birthdays • graduations",
+    heroAsideBody: "One warm studio for the moments your people will remember.",
+    heroFooterIndex: "01 / 06",
+    heroFooterDescriptor: "Event décor + joyful details + beautiful memories",
+    tickerItems: "Weddings|Birthdays|Graduations|Baby showers|Special occasions",
+    aboutEyebrow: "The Blue Decore approach",
+    aboutRailLabel: "About the studio",
+    aboutTitle: "Beautiful details",
+    aboutAccent: "for every reason.",
+    aboutBody: "We create welcoming celebration spaces with a confident blue point of view, thoughtful details, and a friendly process from first idea to final photo.",
+    aboutQuote: "The best décor makes people feel at home in the moment.",
+    aboutImageUrl: "/images/blue-decore/weddings.jpg",
+    aboutCaptionLeft: "Blue tablescape / Event styling",
+    aboutCaptionRight: "Joy, detail, and a little sparkle",
+    programsEyebrow: "Celebration collections",
+    programsRailLabel: "Choose your moment",
+    programsTitle: "A beautiful setting",
+    programsAccent: "starts here.",
+    programsSummary: "Tell us what you are celebrating and we will shape the colors, details, and atmosphere around it.",
+    audioImageLabel: "Blue Decore / Celebration mood",
+    audioCaptionLabel: "A little inspiration",
+    servicesEyebrow: "What we style",
+    servicesRailLabel: "Décor for every occasion",
+    servicesTitle: "Bring your people",
+    servicesAccent: "we’ll bring the magic.",
+    servicesSummary: "From intimate family moments to proud student milestones, we make the room feel as special as the reason you gathered.",
+    eventEyebrow: "Next celebration",
+    eventTitle: "Your moment",
+    eventAccent: "deserves the details.",
+    eventBody: "Whether it is your wedding day, a birthday surprise, a graduation party, or a baby shower, Blue Decore is here to make it feel warm, joyful, and completely yours.",
+    eventCtaLabel: "Start planning",
+    eventImageUrl: "/images/blue-decore/graduations.jpg",
+    eventImageLabel: "Blue-forward celebration / Photo-ready",
+    journalEyebrow: "Notes from the studio",
+    journalRailLabel: "Ideas for your day",
+    journalTitle: "Little details",
+    journalAccent: "big feeling.",
+    contactEyebrow: "Let’s make a plan",
+    contactRailLabel: "Start your celebration",
+    contactTitle: "Tell us",
+    contactAccent: "what you’re dreaming.",
+    contactBody: "Share the occasion, the date, and the feeling you want your guests to leave with. We’ll come back with a thoughtful first idea.",
+    footerBuiltLine: "Styled with care / Made for your people",
+  };
   const tickerItems = settings.tickerItems.split("|").map((item) => item.trim()).filter(Boolean);
   const tickerSequence = [...tickerItems, ...tickerItems.slice(0, 2)];
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -59,12 +121,12 @@ export default function Home() {
     const form = event.currentTarget;
     const values = new FormData(form);
     submitInquiry.mutate({ name: String(values.get("name") ?? ""), email: String(values.get("email") ?? ""), brief: String(values.get("brief") ?? "") }, {
-      onSuccess: () => { toast.success("Your note reached the Kasha desk.", { description: "We’ll be in touch through the contact details you shared." }); form.reset(); },
+      onSuccess: () => { toast.success("Your note reached the Blue Decore studio.", { description: "We’ll be in touch through the contact details you shared." }); form.reset(); },
       onError: () => toast.error("Your note could not be sent.", { description: "Please try again in a moment." }),
     });
   };
   const closeMenu = () => setMenuOpen(false);
-  const onPlaceholder = (label: string) => toast(`${label} is being prepared for the next broadcast.`, { description: "The Kasha desk is shaping the full listening experience." });
+  const onPlaceholder = (label: string) => toast(`${label} is being prepared for the next broadcast.`, { description: "We’re shaping a calm, considered space for you." });
 
   return (
     <div className="kasha-page">
@@ -96,11 +158,11 @@ export default function Home() {
 
         <section className="about-section section-wrap section-space" id="about" aria-labelledby="about-heading"><div className="section-rail"><span>02</span><span>{settings.aboutRailLabel}</span></div><div className="about-grid"><div className="about-copy"><p className="eyebrow">{settings.aboutEyebrow}</p><h2 id="about-heading">{settings.aboutTitle} <em>{settings.aboutAccent}</em></h2><p className="body-large">{settings.aboutBody}</p><blockquote>“{settings.aboutQuote}”</blockquote><button className="text-link" type="button" onClick={() => onPlaceholder(settings.aboutRailLabel)}>{copy.readStory} <ArrowRight size={16} /></button></div><figure className="editorial-figure"><div className="image-frame image-frame-tall"><img src={settings.aboutImageUrl} alt={settings.aboutCaptionLeft} /></div><figcaption><span>{settings.aboutCaptionLeft}</span><span>{settings.aboutCaptionRight}</span></figcaption></figure></div></section>
 
-        <section className="programs-section section-space" id="programs" aria-labelledby="programs-heading"><div className="section-wrap"><div className="section-rail"><span>03</span><span>{settings.programsRailLabel}</span></div><div className="section-heading-row"><div><p className="eyebrow">{settings.programsEyebrow}</p><h2 id="programs-heading">{settings.programsTitle}<br /><em>{settings.programsAccent}</em></h2></div><p className="section-summary">{settings.programsSummary}</p></div><div className="programs-layout"><div className="program-list">{programs.map((program, index) => <button className="program-row" type="button" key={program.id} onClick={() => onPlaceholder(program.title)}><span className="program-index">{String(index + 1).padStart(2, "0")}</span><span className="program-name"><strong>{program.title}</strong><small>{program.subtitle}</small></span><span className="program-detail">{program.description}</span><span className="program-tag">{program.tag}</span><ArrowUpRight size={19} className="program-arrow" /></button>)}</div><div className="audio-feature"><div className="audio-image"><img src={featuredProgram?.imageUrl || settings.heroImageUrl} alt={featuredProgram?.title ?? settings.audioCaptionLabel} /><span className="image-label">{settings.audioImageLabel}</span></div><button className={`play-button ${playing ? "is-playing" : ""}`} type="button" aria-label={playing ? "Pause sample" : "Play sample"} onClick={() => { setPlaying((value) => !value); toast(playing ? "Sample paused." : "Playing a short Kasha sample."); }}>{playing ? <span className="pause-bars"><i /><i /></span> : <Play size={20} fill="currentColor" />}</button><div className="audio-caption"><span>{settings.audioCaptionLabel}</span><strong>{featuredProgram?.featureTitle ?? featuredProgram?.title}</strong><small>{featuredProgram?.featureSubtitle ?? featuredProgram?.subtitle}</small></div></div></div></div></section>
+        <section className="programs-section section-space" id="programs" aria-labelledby="programs-heading"><div className="section-wrap"><div className="section-rail"><span>03</span><span>{settings.programsRailLabel}</span></div><div className="section-heading-row"><div><p className="eyebrow">{settings.programsEyebrow}</p><h2 id="programs-heading">{settings.programsTitle}<br /><em>{settings.programsAccent}</em></h2></div><p className="section-summary">{settings.programsSummary}</p></div><div className="programs-layout"><div className="program-list">{celebrationPackages.map((program, index) => <button className="program-row" type="button" key={program.id} onClick={() => onPlaceholder(program.title)}><span className="program-index">{String(index + 1).padStart(2, "0")}</span><span className="program-name"><strong>{program.title}</strong><small>{program.subtitle}</small></span><span className="program-detail">{program.description}</span><span className="program-tag">{program.tag}</span><ArrowUpRight size={19} className="program-arrow" /></button>)}</div><div className="audio-feature"><div className="audio-image"><img src={featuredProgram?.imageUrl || settings.heroImageUrl} alt={featuredProgram?.title ?? settings.audioCaptionLabel} /><span className="image-label">{settings.audioImageLabel}</span></div><button className={`play-button ${playing ? "is-playing" : ""}`} type="button" aria-label={playing ? "Pause sample" : "Play sample"} onClick={() => { setPlaying((value) => !value); toast(playing ? "Inspiration paused." : "A little Blue Decore inspiration."); }}>{playing ? <span className="pause-bars"><i /><i /></span> : <Play size={20} fill="currentColor" />}</button><div className="audio-caption"><span>{settings.audioCaptionLabel}</span><strong>{featuredProgram?.featureTitle ?? featuredProgram?.title}</strong><small>{featuredProgram?.featureSubtitle ?? featuredProgram?.subtitle}</small></div></div></div></div></section>
 
-        <section className="services-section section-wrap section-space" id="services" aria-labelledby="services-heading"><div className="section-rail"><span>04</span><span>{settings.servicesRailLabel}</span></div><div className="section-heading-row services-heading"><div><p className="eyebrow">{settings.servicesEyebrow}</p><h2 id="services-heading">{settings.servicesTitle}<br /><em>{settings.servicesAccent}</em></h2></div><p className="section-summary">{settings.servicesSummary}</p></div><div className="services-grid">{services.map((service, index) => { const Icon = serviceIcon(service.iconKey); return <button className="service-card" type="button" key={service.id} onClick={() => onPlaceholder(service.title)}><span className="service-top"><span>{String.fromCharCode(65 + index)}</span><Icon size={20} /></span><h3>{service.title}</h3><p>{service.description}</p><span className="service-link">Explore <ArrowUpRight size={16} /></span></button>; })}</div></section>
+        <section className="services-section section-wrap section-space" id="services" aria-labelledby="services-heading"><div className="section-rail"><span>04</span><span>{settings.servicesRailLabel}</span></div><div className="section-heading-row services-heading"><div><p className="eyebrow">{settings.servicesEyebrow}</p><h2 id="services-heading">{settings.servicesTitle}<br /><em>{settings.servicesAccent}</em></h2></div><p className="section-summary">{settings.servicesSummary}</p></div><div className="services-grid">{decorServices.map((service, index) => <button className="service-card" type="button" key={service.title} onClick={() => onPlaceholder(service.title)}><div className="service-image"><img src={service.image} alt={service.label} /><span>{service.label}</span></div><span className="service-top"><span>{String.fromCharCode(65 + index)}</span><Sparkles size={20} /></span><h3>{service.title}</h3><p>{service.description}</p><span className="service-link">Explore <ArrowUpRight size={16} /></span></button>)}</div></section>
 
-        <section className="event-section section-wrap section-space" aria-labelledby="event-heading"><div className="event-image"><img src={leadEvent?.imageUrl ?? settings.eventImageUrl} alt={leadEvent?.title ?? settings.eventImageLabel} /><span className="image-label image-label-dark">{settings.eventImageLabel}</span></div><div className="event-copy"><p className="eyebrow">{settings.eventEyebrow}</p><h2 id="event-heading">{settings.eventTitle}<br /><em>{settings.eventAccent}</em></h2><p className="body-large">{leadEvent?.description ?? settings.eventBody}</p><button className="button button-outline" type="button" onClick={() => scrollToId("contact")}>{leadEvent?.ctaLabel ?? settings.eventCtaLabel} <ArrowUpRight size={17} /></button></div></section>
+        <section className="event-section section-wrap section-space" aria-labelledby="event-heading"><div className="event-image"><img src={settings.eventImageUrl} alt={settings.eventImageLabel} /><span className="image-label image-label-dark">{settings.eventImageLabel}</span></div><div className="event-copy"><p className="eyebrow">{settings.eventEyebrow}</p><h2 id="event-heading">{settings.eventTitle}<br /><em>{settings.eventAccent}</em></h2><p className="body-large">{settings.eventBody}</p><button className="button button-outline" type="button" onClick={() => scrollToId("contact")}>{settings.eventCtaLabel} <ArrowUpRight size={17} /></button></div></section>
 
         <section className="journal-section section-space" id="journal" aria-labelledby="journal-heading"><div className="section-wrap"><div className="section-rail"><span>05</span><span>{settings.journalRailLabel}</span></div><div className="section-heading-row"><div><p className="eyebrow">{settings.journalEyebrow}</p><h2 id="journal-heading">{settings.journalTitle}<br /><em>{settings.journalAccent}</em></h2></div><button className="text-link" type="button" onClick={() => onPlaceholder(settings.journalRailLabel)}>{copy.viewNotes} <ArrowRight size={16} /></button></div><div className="journal-list">{journalEntries.map((note) => <button type="button" className="journal-row" key={note.id} onClick={() => onPlaceholder(note.title)}><span className="journal-date">{note.dateLabel}</span><strong>{note.title}</strong><span className="journal-kind">{note.category}</span><ArrowUpRight size={18} /></button>)}</div></div></section>
 
