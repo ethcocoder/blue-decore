@@ -43,7 +43,7 @@ export default function Home() {
   const { theme, toggleTheme } = useTheme();
   const [language, setLanguage] = useState<"en" | "am">(() => (localStorage.getItem("kasha-language") as "en" | "am") || "en");
   const copy = labels[language];
-  const homepage = trpc.public.homepage.useQuery(undefined, { refetchOnWindowFocus: false });
+  const homepage = trpc.public.homepage.useQuery(undefined, { refetchOnWindowFocus: false, retry: 1 });
   const submitInquiry = trpc.public.submitInquiry.useMutation();
 
   useEffect(() => {
@@ -56,8 +56,8 @@ export default function Home() {
   const content = homepage.data;
   const featuredProgram = celebrationPackages[0];
 
-  if (homepage.isLoading || !content?.settings) return <LoadingSignal />;
   if (homepage.isError) return <main className="kasha-page"><section className="hero"><div className="hero-scrim" /><div className="hero-content section-wrap"><div className="hero-copy"><p className="eyebrow eyebrow-light">Signal interrupted</p><h1>We&apos;ll be back<br /><em>shortly.</em></h1><p className="hero-intro">The Blue Decore studio could not load the current broadcast. Please refresh this page.</p></div></div></section></main>;
+  if (homepage.isLoading || !content?.settings) return <LoadingSignal />;
 
   const { settings: contentSettings, journalEntries } = content;
   const settings = {
